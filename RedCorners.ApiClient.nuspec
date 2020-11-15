@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <metadata>
+    <id>RedCorners.ApiClient</id>
+    <version>8.0.1</version>
+    <title>RedCorners.ApiClient</title>
+    <authors>NeatCapital OÜ</authors>
+    <owners>NeatCapital OÜ</owners>
+    <projectUrl>http://redcorners.com/core/</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>API Client for RedCorners Backends.</description>
+    <releaseNotes>API Client for RedCorners Backends.</releaseNotes>
+    <copyright>Copyright 2019-2020 NeatCapital OÜ</copyright>
+    <tags>API Rest Client</tags>
+
+    <dependencies>
+      <group targetFramework="netstandard2.0">
+		<dependency id="Newtonsoft.Json" version="12.0.3" />
+		<dependency id="RestSharp" version="106.11.7" />
+		<dependency id="RedCorners" version="8.0.0" />
+      </group>
+    </dependencies>
+
+    <license type="file">LICENSE.txt</license>
+  </metadata>
+
+  <files>
+    <file src="LICENSE.txt" target="" />
+    <file 
+      src="bin\Release\netstandard2.0\RedCorners.ApiClient.dll" 
+      target="lib\netstandard2.0\RedCorners.ApiClient.dll" />
+  </files>
+</package>
