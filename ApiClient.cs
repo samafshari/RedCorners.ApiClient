@@ -14,17 +14,17 @@ namespace RedCorners
 {
     public static class ApiClientExtensions
     {
-        public static bool IsOk(this IRestResponse response) =>
+        public static bool IsOk(this RestResponse response) =>
             response != null && response.StatusCode == HttpStatusCode.OK;
     }
 
     public abstract class ApiClient
     {
         public event EventHandler<string> OnLog;
-        public event EventHandler<IRestResponse> OnServerError;
-        public event EventHandler<IRestResponse> OnResponse;
-        public event EventHandler<IRestResponse> OnSuccess;
-        public event EventHandler<IRestResponse> OnGone;
+        public event EventHandler<RestResponse> OnServerError;
+        public event EventHandler<RestResponse> OnResponse;
+        public event EventHandler<RestResponse> OnSuccess;
+        public event EventHandler<RestResponse> OnGone;
 
         protected virtual void Log(string message, [CallerMemberName] string method = null)
         {
@@ -36,7 +36,7 @@ namespace RedCorners
         
         public ApiClient() { }
 
-        public virtual async Task<IRestResponse> RequestAsync(string path, Method method = Method.GET, object dto = null, Action<RestRequest> buildRequest = null, string contentType = null)
+        public virtual async Task<RestResponse> RequestAsync(string path, Method method = Method.Get, object dto = null, Action<RestRequest> buildRequest = null, string contentType = null)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace RedCorners
                 buildRequest?.Invoke(request);
                 if (dto != null)
                 {
-                    if (method == Method.GET)
+                    if (method == Method.Get)
                     {
                         var json = JsonConvert.SerializeObject(dto);
                         var dic = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
@@ -82,7 +82,7 @@ namespace RedCorners
                 {
                     var result = await client.ExecuteAsync(request);
                     OnResponse?.Invoke(this, result);
-                    Log($"[{watch.Elapsed.TotalSeconds}s/{client.BaseUrl}] {request.Method} {result?.ResponseUri?.ToString() ?? path} response ({result.StatusCode}): {result.Content.Head(1024)}\n");
+                    Log($"[{watch.Elapsed.TotalSeconds}s/{BaseUrl}] {request.Method} {result?.ResponseUri?.ToString() ?? path} response ({result.StatusCode}): {result.Content.Head(1024)}\n");
                     if (result.StatusCode == HttpStatusCode.Gone)
                     {
                         OnGone?.Invoke(this, result);
@@ -109,13 +109,13 @@ namespace RedCorners
             return null;
         }
 
-        public virtual async Task<T> RequestAsync<T>(string path, Method method = Method.GET, object dto = null, Action<RestRequest> buildRequest = null, Action onfail = null, string contentType = null)
+        public virtual async Task<T> RequestAsync<T>(string path, Method method = Method.Get, object dto = null, Action<RestRequest> buildRequest = null, Action onfail = null, string contentType = null)
         {
             var response = await RequestAsync(path, method, dto, buildRequest, contentType);
             return DeserializeResponse<T>(response, onfail);
         }
 
-        public virtual T DeserializeResponse<T>(IRestResponse response, Action onfail = null)
+        public virtual T DeserializeResponse<T>(RestResponse response, Action onfail = null)
         {
             if (response.IsOk())
             {
